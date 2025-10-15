@@ -1,0 +1,26 @@
+/app
+  ├── page.tsx                    → Home: Choose role
+  ├── customer/
+  │     ├── phone/page.tsx        → Enter phone number
+  │     ├── layout.tsx            → Bottom tab: Menu, Cart
+  │     ├── menu/page.tsx         → Select food, remarks, add to cart
+  │     ├── cart/page.tsx         → View cart, total, pay
+  │     ├── orderStatus/page.tsx  → Shows order progression
+  ├── admin/
+  │     ├── login/page.tsx        → Password gate
+  │     ├── layout.tsx            → Bottom tab: Orders, Dashboard
+  │     ├── orders/page.tsx       → View + update orders
+  │     ├── dashboard/page.tsx    → View sales stats
+  ├── api/
+  │     ├── createBill/route.ts   → Create Billplz bill
+  │     ├── billCallback/route.ts → Update Supabase on payment
+/components
+  ├── BottomNav.tsx
+  ├── MenuItemCard.tsx
+  ├── CartItemCard.tsx
+  ├── OrderCard.tsx
+  ├── StatusProgressBar.tsx
+  ├── DashboardStats.tsx
+/lib
+  ├── supabaseClient.ts
+  ├── billplz.ts

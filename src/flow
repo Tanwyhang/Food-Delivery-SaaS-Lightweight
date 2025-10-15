@@ -1,0 +1,153 @@
+Perfect — this version captures a **complete functional MVP flow** for both **customer and admin**, simple yet production-ready.
+
+Here’s your fully updated and clean **Next.js App Router MVP prompt**, ready for implementation 👇
+
+---
+
+## ⚙️ **MVP Prompt — “Mom’s Delivery App (Malaysia)” (v2)**
+
+> Build a **mobile-first web app** for a small home business called **Mom’s Delivery**, using **Next.js (App Router)** + **Tailwind CSS** + **Billplz API** (for TNG, FPX, DuitNow payments).
+> The app focuses on simplicity — no maps, no user login, just direct ordering and admin management.
+> Deployable on **Vercel** with **Supabase** as backend.
+
+---
+
+## 🏠 **Landing Flow**
+
+* When the user first visits `/`, they see the **Home Page** with role selection:
+
+  * 🛍️ **Customer**
+  * 👩‍💼 **Admin**
+
+---
+
+## 👩‍🍳 **Customer Flow**
+
+1. **Enter Phone Number**
+
+   * After selecting “Customer,” user is prompted to input their phone number.
+   * This number is saved and attached to their orders (no login or OTP).
+
+2. **Customer Navigation (Bottom Tabs)**
+
+   * Two tabs at the bottom:
+
+     1. 🍱 **Menu Tab** — `/customer/menu`
+     2. 🛒 **Cart Tab** — `/customer/cart`
+
+3. **Menu Page**
+
+   * Displays list of food items (from Supabase or local array).
+   * Each item has:
+
+     * Name
+     * Price
+     * Quantity selector (1–5)
+     * Remarks field (optional text)
+     * “Add to Cart” button
+   * Adding item updates cart in local state or localStorage.
+
+4. **Cart Page (Orders Tab)**
+
+   * Shows all added food items, quantity, remarks, and subtotal.
+   * Automatically updates total as user adds/removes items.
+   * Contains a **“Pay Now”** button:
+
+     * Calls `/api/createBill`
+     * Redirects user to **Billplz Payment Page** (TNG, FPX, DuitNow supported).
+
+5. **Payment + Order Status**
+
+   * On successful payment, user is redirected to `/customer/orderStatus`.
+   * Page shows order status progression:
+
+     ```
+     PAID → PREPARING → DELIVERING → DELIVERED
+     ```
+
+     * Displayed as 4 progressive dots with corresponding text under each stage.
+   * Status auto-updates via Supabase Realtime (or periodic polling).
+
+---
+
+## 👩‍💼 **Admin Flow**
+
+1. **Access Control**
+
+   * After selecting “Admin,” user must enter a password.
+   * Password is stored in `.env` as `ADMIN_PASSWORD`.
+
+2. **Admin Navigation (Bottom Tabs)**
+
+   * Two tabs at the bottom:
+
+     1. 📋 **View Orders** — `/admin/orders`
+     2. 📊 **Dashboard** — `/admin/dashboard`
+
+3. **View Orders Tab**
+
+   * Displays all orders grouped by current status:
+
+     * **Paid**
+     * **Preparing**
+     * **Delivering**
+     * **Delivered**
+   * Within each group, orders are sorted **newest to oldest**.
+   * Each order shows:
+
+     * Phone number
+     * Items list
+     * Total amount
+     * Current status
+   * Admin can:
+
+     * ✅ Press “Done” to move an order to the **next status** (e.g. Preparing → Delivering → Delivered).
+     * ☑️ Select multiple orders for **batch status updates**.
+   * When status updates, the customer’s **orderStatus page** reflects it in real-time.
+
+4. **Dashboard Tab**
+
+   * Displays sales analytics:
+
+     * Total revenue
+     * Total orders by status
+     * Sales trends by day/week/month
+     * Simple chart (optional using Recharts or Chart.js)
+     * Export option (optional later)
+
+---
+
+## 💳 **Payment Integration (Billplz)**
+
+**Endpoint:** `/app/api/createBill/route.js`
+
+**Request:**
+
+```json
+{
+  "amount": 12.50,
+  "phone": "0123456789",
+  "items": [
+    { "name": "Nasi Lemak", "quantity": 2, "remarks": "less spicy" }
+  ]
+}
+```
+
+**Flow:**
+
+1. API creates Billplz bill → returns payment URL
+2. Frontend redirects to Billplz payment page
+3. Billplz callback updates Supabase order record (status: “Paid”)
+4. Customer redirected to `/customer/orderStatus`
+
+---
+
+## 🧱 **Tech Stack**
+
+| Layer     | Tool                     | Description                       |
+| --------- | ------------------------ | --------------------------------- |
+| Framework | **Next.js (App Router)** | Frontend + backend in one project |
+| Styling   | **Tailwind CSS**         | Mobile-first responsive UI        |
+| Database  | **Supabase**             | Orders, statuses, analytics       |
+| Payment   | **Billplz API**          | TNG, FPX, DuitNow payments        |
+| Hosting   | **Vercel**               | Free, simple deployment           |
