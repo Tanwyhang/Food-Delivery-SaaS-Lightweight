@@ -30,7 +30,16 @@ export default function MenuItemCard({ item, onAddToCart }: MenuItemCardProps) {
       )}
       
       <div className="flex items-start justify-between mb-2">
-        <h3 className="font-semibold text-lg">{item.title}</h3>
+        <div>
+          <h3 className="font-semibold text-lg">{item.title}</h3>
+          {item.recommendation_level > 0 && (
+            <div className="flex gap-0.5 mt-1">
+              {[...Array(item.recommendation_level)].map((_, i) => (
+                <Star key={i} className="w-4 h-4 fill-primary text-primary" />
+              ))}
+            </div>
+          )}
+        </div>
         {item.recommendation_level >= 4 && (
           <span className="text-xs bg-accent text-accent-foreground px-2 py-1 rounded flex items-center gap-1">
             <Star className="w-3 h-3 fill-current" /> Recommended
@@ -69,7 +78,7 @@ export default function MenuItemCard({ item, onAddToCart }: MenuItemCardProps) {
         onClick={handleAdd}
         className="w-full bg-primary text-primary-foreground py-2 rounded font-medium hover:opacity-90 transition"
       >
-        Add to Cart
+        Add to Order
       </button>
     </div>
   );

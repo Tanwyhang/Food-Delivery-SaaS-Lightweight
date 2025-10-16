@@ -3,26 +3,41 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import StatusProgressBar from '@/components/StatusProgressBar';
+import OrderCard from '@/components/OrderCard';
 import { Order } from '@/lib/types';
 
 export default function OrderStatusPage() {
-  const [order, setOrder] = useState<Order | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const orderId = localStorage.getItem('currentOrderId');
-    if (!orderId) return;
+    const phone = localStorage.getItem('customerPhone');
+    if (!phone) return;
+    
+    const ordersData = localStorage.getItem(`orders_${phone}`);
+    if (!ordersData) {
+      setLoading(false);
+      return;
+    }
+    
+    const orderIds = JSON.parse(ordersData);
+    if (orderIds.length === 0) {
+      setLoading(false);
+      return;
+    }
 
-    const fetchOrder = async () => {
+    const fetchOrders = async () => {
       const { data } = await supabase
         .from('orders')
         .select('*')
-        .eq('id', orderId)
-        .single();
+        .in('id', orderIds)
+        .order('created_at', { ascending: false });
       
-      if (data) setOrder(data);
+      if (data) setOrders(data);
+      setLoading(false);
     };
 
-    fetchOrder();
+    fetchOrders();
 
     const channel = supabase
       .channel('order-updates')
@@ -32,9 +47,8 @@ export default function OrderStatusPage() {
           event: 'UPDATE',
           schema: 'public',
           table: 'orders',
-          filter: `id=eq.${orderId}`,
         },
-        (payload) => setOrder(payload.new as Order)
+        () => fetchOrders()
       )
       .subscribe();
 
@@ -43,42 +57,33 @@ export default function OrderStatusPage() {
     };
   }, []);
 
-  if (!order) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>Loading order...</p>
+        <p>Loading orders...</p>
+      </div>
+    );
+  }
+
+  if (orders.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-muted-foreground">No orders found</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <h1 className="text-2xl font-bold mb-6 text-center">Order Status</h1>
+    <div className="min-h-screen bg-background p-4">
+      <h1 className="text-2xl font-bold mb-4">My Orders</h1>
       
-      <StatusProgressBar currentStatus={order.status} />
-
-      <div className="bg-card text-card-foreground rounded-lg border shadow-sm p-6 mt-8">
-        <h2 className="font-semibold mb-4">Order Details</h2>
-        {order.items.map((item, idx) => (
-          <p key={idx} className="mb-2">
-            {item.quantity}x {item.name}
-            {item.remarks && <span className="text-muted-foreground"> ({item.remarks})</span>}
-          </p>
+      <div className="space-y-6">
+        {orders.map((order) => (
+          <div key={order.id} className="space-y-4">
+            <StatusProgressBar currentStatus={order.status} />
+            <OrderCard order={order} />
+          </div>
         ))}
-        {order.address && (
-          <div className="mt-4 pt-4 border-t">
-            <p className="font-semibold mb-1">Delivery Address:</p>
-            <p className="text-muted-foreground">
-              {order.address.block}, Lorong {order.address.lorong}, Unit {order.address.unit}
-            </p>
-          </div>
-        )}
-        <div className="border-t mt-4 pt-4">
-          <div className="flex justify-between font-bold text-lg">
-            <span>Total</span>
-            <span className="text-primary">RM {order.total.toFixed(2)}</span>
-          </div>
-        </div>
       </div>
     </div>
   );

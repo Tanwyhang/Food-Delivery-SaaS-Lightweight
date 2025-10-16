@@ -2,13 +2,14 @@
 
 import BottomNav from '@/components/BottomNav';
 import { usePathname } from 'next/navigation';
-import { ClipboardList, UtensilsCrossed, BarChart3 } from 'lucide-react';
+import { ClipboardList, UtensilsCrossed, BarChart3, Tags } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const navItems = [
     { href: '/admin/orders', label: 'Orders', icon: ClipboardList },
     { href: '/admin/menu', label: 'Menu', icon: UtensilsCrossed },
+    { href: '/admin/categories', label: 'Categories', icon: Tags },
     { href: '/admin/dashboard', label: 'Dashboard', icon: BarChart3 },
   ];
 

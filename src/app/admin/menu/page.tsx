@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import { MenuItem } from '@/lib/types';
+import { MenuItem, Category } from '@/lib/types';
 import { Loader2, Star } from 'lucide-react';
 
 export default function AdminMenuPage() {
   const [items, setItems] = useState<MenuItem[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -17,17 +18,24 @@ export default function AdminMenuPage() {
     image_url: '',
     recommendation_level: '0',
     is_available: true,
+    category_id: '',
   });
 
   useEffect(() => {
     fetchItems();
+    fetchCategories();
   }, []);
+
+  const fetchCategories = async () => {
+    const { data } = await supabase.from('categories').select('*').order('name');
+    if (data) setCategories(data);
+  };
 
   const fetchItems = async () => {
     const { data } = await supabase
       .from('menu_items')
       .select('*')
-      .order('recommendation_level', { ascending: false });
+      .order('created_at', { ascending: true });
     
     if (data) setItems(data);
   };
@@ -42,6 +50,7 @@ export default function AdminMenuPage() {
       image_url: formData.image_url || null,
       recommendation_level: parseInt(formData.recommendation_level),
       is_available: formData.is_available,
+      category_id: formData.category_id || null,
     };
 
     if (editingId) {
@@ -63,6 +72,7 @@ export default function AdminMenuPage() {
       image_url: item.image_url || '',
       recommendation_level: item.recommendation_level.toString(),
       is_available: item.is_available,
+      category_id: item.category_id || '',
     });
     setShowForm(true);
   };
@@ -117,6 +127,7 @@ export default function AdminMenuPage() {
       image_url: '',
       recommendation_level: '0',
       is_available: true,
+      category_id: '',
     });
     setEditingId(null);
     setShowForm(false);
@@ -196,6 +207,20 @@ export default function AdminMenuPage() {
               onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
               className="w-full border border-input bg-background rounded px-3 py-2"
             />
+          </div>
+
+          <div className="mb-2">
+            <label className="block text-sm mb-1">Category</label>
+            <select
+              value={formData.category_id}
+              onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+              className="w-full border border-input bg-background rounded px-3 py-2 mb-2"
+            >
+              <option value="">No Category</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
+            </select>
           </div>
 
           <div className="mb-2">

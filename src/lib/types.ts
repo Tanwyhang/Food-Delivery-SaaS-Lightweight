@@ -23,6 +23,13 @@ export interface Order {
   updated_at: string;
 }
 
+export interface Category {
+  id: string;
+  name: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface MenuItem {
   id: string;
   title: string;
@@ -31,6 +38,7 @@ export interface MenuItem {
   image_url?: string;
   recommendation_level: number;
   is_available: boolean;
+  category_id?: string;
   created_at: string;
   updated_at: string;
 }

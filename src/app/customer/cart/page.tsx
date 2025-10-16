@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import CartItemCard from '@/components/CartItemCard';
 import { CartItem } from '@/lib/types';
+import { Package } from 'lucide-react';
 
 export default function CartPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -11,11 +12,18 @@ export default function CartPage() {
   const [block, setBlock] = useState<'Amarin' | 'Azelia' | 'Eugenia' | 'Sierra'>('Amarin');
   const [lorong, setLorong] = useState('');
   const [unit, setUnit] = useState('');
+  const [hasOrder, setHasOrder] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const saved = localStorage.getItem('cart');
     if (saved) setCart(JSON.parse(saved));
+    
+    const phone = localStorage.getItem('customerPhone');
+    if (phone) {
+      const orders = localStorage.getItem(`orders_${phone}`);
+      setHasOrder(!!orders);
+    }
   }, []);
 
   const handleRemove = (index: number) => {
@@ -57,7 +65,10 @@ export default function CartPage() {
         // PROTOTYPE: Show success message
         console.log('✅ Payment Success:', data.message);
         
-        localStorage.setItem('currentOrderId', data.orderId);
+        const existingOrders = localStorage.getItem(`orders_${phone}`);
+        const orders = existingOrders ? JSON.parse(existingOrders) : [];
+        orders.push(data.orderId);
+        localStorage.setItem(`orders_${phone}`, JSON.stringify(orders));
         localStorage.removeItem('cart');
         
         // Redirect to order status page (no external payment gateway)
@@ -74,7 +85,16 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-background p-4">
-      <h1 className="text-2xl font-bold mb-4">Cart</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Cart</h1>
+        <button
+          onClick={() => router.push('/customer/orderStatus')}
+          disabled={!hasOrder}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition disabled:opacity-50 disabled:cursor-not-allowed bg-secondary text-secondary-foreground hover:opacity-90"
+        >
+          <Package className="w-4 h-4" /> View Order
+        </button>
+      </div>
       
       {cart.length === 0 ? (
         <p className="text-center text-muted-foreground mt-8">Your cart is empty</p>
@@ -119,7 +139,7 @@ export default function CartPage() {
             <label className="block text-sm mb-1">Unit Number *</label>
             <input
               type="text"
-              placeholder="e.g. 01-01"
+              placeholder="e.g. 666"
               value={unit}
               onChange={(e) => setUnit(e.target.value)}
               className="w-full border border-input bg-background rounded px-3 py-2"
@@ -127,13 +147,15 @@ export default function CartPage() {
             />
           </div>
 
-          <button
-            onClick={handlePayNow}
-            disabled={loading}
-            className="w-full bg-primary text-primary-foreground py-4 rounded-lg font-semibold text-lg hover:opacity-90 transition disabled:opacity-50"
-          >
-            {loading ? 'Processing...' : 'Pay Now'}
-          </button>
+          <div className="space-y-3">
+            <button
+              onClick={handlePayNow}
+              disabled={loading}
+              className="w-full bg-primary text-primary-foreground py-4 rounded-lg font-semibold text-lg hover:opacity-90 transition disabled:opacity-50"
+            >
+              {loading ? 'Processing...' : 'Pay Now'}
+            </button>
+          </div>
         </>
       )}
     </div>
