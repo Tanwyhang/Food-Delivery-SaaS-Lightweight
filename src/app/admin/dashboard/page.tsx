@@ -22,12 +22,34 @@ export default function AdminDashboardPage() {
   const [monthSales, setMonthSales] = useState({ revenue: 0, orders: 0 });
   const [monthlyTrend, setMonthlyTrend] = useState<MonthlyData[]>([]);
   const [topItems, setTopItems] = useState<TopItem[]>([]);
+  const [useMockData, setUseMockData] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
-  }, []);
+  }, [useMockData]);
 
   const fetchDashboardData = async () => {
+    if (useMockData) {
+      setTodaySales({ revenue: 1250.50, orders: 15 });
+      setMonthSales({ revenue: 18750.75, orders: 225 });
+      setMonthlyTrend([
+        { month: 'Aug', revenue: 12500 },
+        { month: 'Sep', revenue: 15200 },
+        { month: 'Oct', revenue: 18900 },
+        { month: 'Nov', revenue: 16400 },
+        { month: 'Dec', revenue: 21300 },
+        { month: 'Jan', revenue: 18750 },
+      ]);
+      setTopItems([
+        { name: 'Nasi Lemak Special', quantity: 45, revenue: 675 },
+        { name: 'Mee Goreng', quantity: 38, revenue: 456 },
+        { name: 'Roti Canai Set', quantity: 52, revenue: 416 },
+        { name: 'Teh Tarik', quantity: 89, revenue: 267 },
+        { name: 'Nasi Ayam', quantity: 31, revenue: 372 },
+      ]);
+      return;
+    }
+
     const { data: orders } = await supabase.from('orders').select('*');
     
     if (!orders) return;
@@ -86,7 +108,15 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="min-h-screen bg-background p-4">
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <button
+          onClick={() => setUseMockData(!useMockData)}
+          className="px-3 py-1 text-sm rounded border border-input hover:bg-accent"
+        >
+          {useMockData ? 'Real Data' : 'Mock Data'}
+        </button>
+      </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-2 gap-3 mb-4">
@@ -126,8 +156,9 @@ export default function AdminDashboardPage() {
                 border: '1px solid hsl(var(--border))',
                 borderRadius: '8px',
               }}
+              formatter={(value: number) => `RM ${value.toFixed(2)}`}
             />
-            <Line type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" strokeWidth={2} />
+            <Line type="monotone" dataKey="revenue" stroke="oklch(0.645 0.246 16.439)" strokeWidth={2} />
           </LineChart>
         </ResponsiveContainer>
       </div>
