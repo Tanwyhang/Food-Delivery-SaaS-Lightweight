@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { MenuItem } from '@/lib/types';
+import { Loader2, Star } from 'lucide-react';
 
 export default function AdminMenuPage() {
   const [items, setItems] = useState<MenuItem[]>([]);
@@ -122,19 +123,19 @@ export default function AdminMenuPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-background p-4">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Menu Management</h1>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-blue-600 text-white px-4 py-2 rounded font-medium"
+          className="bg-primary text-primary-foreground px-4 py-2 rounded font-medium hover:opacity-90"
         >
           {showForm ? 'Cancel' : '+ Add Item'}
         </button>
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-4 mb-4">
+        <form onSubmit={handleSubmit} className="bg-card text-card-foreground rounded-lg border shadow-sm p-4 mb-4">
           <h2 className="font-semibold mb-3">{editingId ? 'Edit Item' : 'New Item'}</h2>
           
           <input
@@ -142,7 +143,7 @@ export default function AdminMenuPage() {
             placeholder="Title *"
             value={formData.title}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            className="w-full border rounded px-3 py-2 mb-2"
+            className="w-full border border-input bg-background rounded px-3 py-2 mb-2"
             required
           />
 
@@ -150,7 +151,7 @@ export default function AdminMenuPage() {
             placeholder="Description"
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            className="w-full border rounded px-3 py-2 mb-2"
+            className="w-full border border-input bg-background rounded px-3 py-2 mb-2"
             rows={2}
           />
 
@@ -160,7 +161,7 @@ export default function AdminMenuPage() {
             placeholder="Price *"
             value={formData.price}
             onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-            className="w-full border rounded px-3 py-2 mb-2"
+            className="w-full border border-input bg-background rounded px-3 py-2 mb-2"
             required
           />
 
@@ -180,20 +181,20 @@ export default function AdminMenuPage() {
               accept="image/*"
               onChange={handleFileChange}
               disabled={uploading}
-              className="w-full border rounded px-3 py-2 mb-2 text-sm"
+              className="w-full border border-input bg-background rounded px-3 py-2 mb-2 text-sm"
             />
             
             {uploading && (
-              <p className="text-sm text-blue-600 mb-2">⏳ Uploading...</p>
+              <p className="text-sm text-primary mb-2 flex items-center gap-1"><Loader2 className="w-4 h-4 animate-spin" /> Uploading...</p>
             )}
             
-            <p className="text-xs text-gray-500 mb-1">Or paste image URL:</p>
+            <p className="text-xs text-muted-foreground mb-1">Or paste image URL:</p>
             <input
               type="url"
               placeholder="https://..."
               value={formData.image_url}
               onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-              className="w-full border rounded px-3 py-2"
+              className="w-full border border-input bg-background rounded px-3 py-2"
             />
           </div>
 
@@ -205,7 +206,7 @@ export default function AdminMenuPage() {
               max="5"
               value={formData.recommendation_level}
               onChange={(e) => setFormData({ ...formData, recommendation_level: e.target.value })}
-              className="w-full border rounded px-3 py-2"
+              className="w-full border border-input bg-background rounded px-3 py-2"
             />
           </div>
 
@@ -219,10 +220,10 @@ export default function AdminMenuPage() {
           </label>
 
           <div className="flex gap-2">
-            <button type="submit" className="flex-1 bg-green-600 text-white py-2 rounded font-medium">
+            <button type="submit" className="flex-1 bg-primary text-primary-foreground py-2 rounded font-medium hover:opacity-90">
               {editingId ? 'Update' : 'Create'}
             </button>
-            <button type="button" onClick={resetForm} className="px-4 bg-gray-300 rounded">
+            <button type="button" onClick={resetForm} className="px-4 bg-secondary text-secondary-foreground rounded hover:opacity-90">
               Cancel
             </button>
           </div>
@@ -231,7 +232,7 @@ export default function AdminMenuPage() {
 
       <div className="space-y-3">
         {items.map((item) => (
-          <div key={item.id} className="bg-white rounded-lg shadow p-4">
+          <div key={item.id} className="bg-card text-card-foreground rounded-lg border shadow-sm p-4">
             <div className="flex gap-3">
               {item.image_url && (
                 <img src={item.image_url} alt={item.title} className="w-20 h-20 object-cover rounded" />
@@ -240,33 +241,33 @@ export default function AdminMenuPage() {
                 <div className="flex items-start justify-between">
                   <div>
                     <h3 className="font-semibold">{item.title}</h3>
-                    {item.description && <p className="text-sm text-gray-600">{item.description}</p>}
+                    {item.description && <p className="text-sm text-muted-foreground">{item.description}</p>}
                   </div>
                   <div className="flex gap-1">
                     {[...Array(item.recommendation_level)].map((_, i) => (
-                      <span key={i}>⭐</span>
+                      <Star key={i} className="w-4 h-4 fill-primary text-primary" />
                     ))}
                   </div>
                 </div>
-                <p className="text-blue-600 font-bold mt-1">RM {item.price.toFixed(2)}</p>
+                <p className="text-primary font-bold mt-1">RM {item.price.toFixed(2)}</p>
                 <div className="flex gap-2 mt-2">
                   <button
                     onClick={() => toggleAvailability(item.id, item.is_available)}
                     className={`text-xs px-3 py-1 rounded ${
-                      item.is_available ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      item.is_available ? 'bg-accent text-accent-foreground' : 'bg-muted text-muted-foreground'
                     }`}
                   >
                     {item.is_available ? 'Available' : 'Unavailable'}
                   </button>
                   <button
                     onClick={() => handleEdit(item)}
-                    className="text-xs px-3 py-1 bg-blue-100 text-blue-800 rounded"
+                    className="text-xs px-3 py-1 bg-accent text-accent-foreground rounded hover:opacity-80"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(item.id)}
-                    className="text-xs px-3 py-1 bg-red-100 text-red-800 rounded"
+                    className="text-xs px-3 py-1 bg-destructive/10 text-destructive rounded hover:opacity-80"
                   >
                     Delete
                   </button>

@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mom's Delivery",
+  title: "BB Delivery",
   description: "Order delicious food from Mom's kitchen",
 };
 

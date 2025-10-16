@@ -1,6 +1,7 @@
 'use client';
 
 import { Order } from '@/lib/types';
+import { Phone, MapPin } from 'lucide-react';
 
 interface OrderCardProps {
   order: Order;
@@ -11,7 +12,7 @@ interface OrderCardProps {
 
 export default function OrderCard({ order, onUpdateStatus, isSelected, onSelect }: OrderCardProps) {
   return (
-    <div className="bg-white rounded-lg shadow p-4 mb-3">
+    <div className="bg-card text-card-foreground rounded-lg border shadow-sm p-4 mb-3">
       {onSelect && (
         <input
           type="checkbox"
@@ -23,12 +24,12 @@ export default function OrderCard({ order, onUpdateStatus, isSelected, onSelect 
       
       <div className="flex justify-between items-start mb-2">
         <div>
-          <p className="font-semibold">📱 {order.phone}</p>
-          <p className="text-xs text-gray-500">
+          <p className="font-semibold flex items-center gap-1"><Phone className="w-4 h-4" /> {order.phone}</p>
+          <p className="text-xs text-muted-foreground">
             {new Date(order.created_at).toLocaleString()}
           </p>
         </div>
-        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+        <span className="text-xs bg-accent text-accent-foreground px-2 py-1 rounded">
           {order.status.toUpperCase()}
         </span>
       </div>
@@ -37,17 +38,22 @@ export default function OrderCard({ order, onUpdateStatus, isSelected, onSelect 
         {order.items.map((item, idx) => (
           <p key={idx} className="text-sm">
             {item.quantity}x {item.name}
-            {item.remarks && <span className="text-gray-500"> ({item.remarks})</span>}
+            {item.remarks && <span className="text-muted-foreground"> ({item.remarks})</span>}
           </p>
         ))}
+        {order.address && (
+          <p className="text-sm text-muted-foreground mt-2 flex items-center gap-1">
+            <MapPin className="w-4 h-4" /> {order.address.block}, Lorong {order.address.lorong}, Unit {order.address.unit}
+          </p>
+        )}
       </div>
 
       <div className="flex justify-between items-center">
-        <p className="font-bold text-blue-600">RM {order.total.toFixed(2)}</p>
+        <p className="font-bold text-primary">RM {order.total.toFixed(2)}</p>
         {onUpdateStatus && order.status !== 'delivered' && (
           <button
             onClick={() => onUpdateStatus(order.id)}
-            className="bg-green-600 text-white px-4 py-1 rounded text-sm"
+            className="bg-primary text-primary-foreground px-4 py-1 rounded text-sm hover:opacity-90"
           >
             Done
           </button>

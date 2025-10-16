@@ -83,13 +83,13 @@ export default function AdminOrdersPage() {
   }, {} as Record<string, Order[]>);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-background p-4">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Orders</h1>
         {selected.size > 0 && (
           <button
             onClick={batchUpdate}
-            className="bg-green-600 text-white px-4 py-2 rounded font-medium"
+            className="bg-primary text-primary-foreground px-4 py-2 rounded font-medium hover:opacity-90"
           >
             Update {selected.size} orders
           </button>

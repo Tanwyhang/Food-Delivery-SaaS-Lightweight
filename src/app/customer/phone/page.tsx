@@ -2,6 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function PhonePage() {
   const [phone, setPhone] = useState('');
@@ -16,26 +20,31 @@ export default function PhonePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-b from-blue-50 to-white">
-      <h1 className="text-3xl font-bold mb-2">Welcome!</h1>
-      <p className="text-gray-600 mb-8 text-center">Enter your phone number to start ordering</p>
-      
-      <form onSubmit={handleSubmit} className="w-full max-w-md">
-        <input
-          type="tel"
-          placeholder="e.g. 0123456789"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          className="w-full border-2 border-gray-300 rounded-lg px-4 py-3 mb-4 text-lg"
-          required
-        />
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 transition"
-        >
-          Continue
-        </button>
-      </form>
+    <div className="min-h-screen flex items-center justify-center p-6 bg-background">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <CardTitle className="text-3xl">Welcome!</CardTitle>
+          <CardDescription>Enter your phone number to start ordering</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="phone">Phone Number</Label>
+              <Input
+                id="phone"
+                type="tel"
+                placeholder="e.g. 0123456789"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+              />
+            </div>
+            <Button type="submit" className="w-full" size="lg">
+              Continue
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

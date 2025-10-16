@@ -5,6 +5,12 @@ export interface CartItem {
   remarks?: string;
 }
 
+export interface Address {
+  block: 'Amarin' | 'Azelia' | 'Eugenia' | 'Sierra';
+  lorong: number;
+  unit: string;
+}
+
 export interface Order {
   id: string;
   phone: string;
@@ -12,6 +18,7 @@ export interface Order {
   total: number;
   status: 'paid' | 'preparing' | 'delivering' | 'delivered';
   bill_id?: string;
+  address?: Address;
   created_at: string;
   updated_at: string;
 }

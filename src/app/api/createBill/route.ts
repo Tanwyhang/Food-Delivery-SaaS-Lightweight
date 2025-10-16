@@ -4,7 +4,7 @@ import { createBill } from '@/lib/billplz';
 
 export async function POST(req: NextRequest) {
   try {
-    const { phone, items, total } = await req.json();
+    const { phone, items, total, address } = await req.json();
 
     // Create order in database
     const { data: order, error } = await supabase
@@ -13,6 +13,7 @@ export async function POST(req: NextRequest) {
         phone,
         items,
         total,
+        address,
         status: 'paid', // Directly set as paid for prototype
       })
       .select()

@@ -44,17 +44,17 @@ export default function MenuPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-4 flex items-center justify-center">
+      <div className="min-h-screen bg-background p-4 flex items-center justify-center">
         <p>Loading menu...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-background p-4">
       <h1 className="text-2xl font-bold mb-4">Menu</h1>
       {menuItems.length === 0 ? (
-        <p className="text-center text-gray-500 mt-8">No items available</p>
+        <p className="text-center text-muted-foreground mt-8">No items available</p>
       ) : (
         menuItems.map((item) => (
           <MenuItemCard key={item.id} item={item} onAddToCart={handleAddToCart} />

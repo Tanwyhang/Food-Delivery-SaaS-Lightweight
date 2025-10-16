@@ -52,23 +52,31 @@ export default function OrderStatusPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-background p-6">
       <h1 className="text-2xl font-bold mb-6 text-center">Order Status</h1>
       
       <StatusProgressBar currentStatus={order.status} />
 
-      <div className="bg-white rounded-lg shadow p-6 mt-8">
+      <div className="bg-card text-card-foreground rounded-lg border shadow-sm p-6 mt-8">
         <h2 className="font-semibold mb-4">Order Details</h2>
         {order.items.map((item, idx) => (
           <p key={idx} className="mb-2">
             {item.quantity}x {item.name}
-            {item.remarks && <span className="text-gray-500"> ({item.remarks})</span>}
+            {item.remarks && <span className="text-muted-foreground"> ({item.remarks})</span>}
           </p>
         ))}
+        {order.address && (
+          <div className="mt-4 pt-4 border-t">
+            <p className="font-semibold mb-1">Delivery Address:</p>
+            <p className="text-muted-foreground">
+              {order.address.block}, Lorong {order.address.lorong}, Unit {order.address.unit}
+            </p>
+          </div>
+        )}
         <div className="border-t mt-4 pt-4">
           <div className="flex justify-between font-bold text-lg">
             <span>Total</span>
-            <span className="text-blue-600">RM {order.total.toFixed(2)}</span>
+            <span className="text-primary">RM {order.total.toFixed(2)}</span>
           </div>
         </div>
       </div>
