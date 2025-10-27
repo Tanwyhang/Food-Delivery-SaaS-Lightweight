@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "BB Delivery",
   description: "Order delicious food from Mom's kitchen",
+  openGraph: {
+    images: "https://mosaskywvcvhnlqgydnj.supabase.co/storage/v1/object/public/menu%20images/logo.png",
+  },
 };
 
 export default function RootLayout({
