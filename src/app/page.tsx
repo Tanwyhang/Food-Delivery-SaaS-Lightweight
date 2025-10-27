@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ShoppingBag, UserCog } from 'lucide-react';
 
@@ -7,10 +8,12 @@ export default function Home() {
     <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background">
       <div className="w-full max-w-md space-y-6">
         <div className="text-center space-y-4">
-          <img
+          <Image
             src="https://mosaskywvcvhnlqgydnj.supabase.co/storage/v1/object/public/menu%20images/logo.png"
             alt="BB Delivery Logo"
-            className="w-32 h-32 mx-auto object-contain"
+            width={128}
+            height={128}
+            className="mx-auto object-contain"
           />
           <div>
             <h1 className="text-4xl font-bold tracking-tight">BB Delivery</h1>

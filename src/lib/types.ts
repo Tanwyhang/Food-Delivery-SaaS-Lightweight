@@ -16,7 +16,7 @@ export interface Order {
   phone: string;
   items: CartItem[];
   total: number;
-  status: 'paid' | 'preparing' | 'delivering' | 'delivered';
+  status: 'pending' | 'paid' | 'preparing' | 'delivering' | 'delivered';
   bill_id?: string;
   address?: Address;
   created_at: string;

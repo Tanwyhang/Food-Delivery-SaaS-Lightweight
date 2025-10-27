@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { MenuItem } from '@/lib/types';
 import { Star } from 'lucide-react';
 
@@ -22,9 +23,11 @@ export default function MenuItemCard({ item, onAddToCart }: MenuItemCardProps) {
   return (
     <div className="bg-card text-card-foreground rounded-lg border shadow-sm p-4 mb-3">
       {item.image_url && (
-        <img
+        <Image
           src={item.image_url}
           alt={item.title}
+          width={500}
+          height={500}
           className="w-full h-40 object-cover rounded-lg mb-3"
         />
       )}

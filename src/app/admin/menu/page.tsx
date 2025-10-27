@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { supabase } from '@/lib/supabaseClient';
 import { MenuItem, Category } from '@/lib/types';
 import { Loader2, Star } from 'lucide-react';
@@ -106,8 +107,12 @@ export default function AdminMenuPage() {
         .getPublicUrl(fileName);
 
       setFormData({ ...formData, image_url: data.publicUrl });
-    } catch (error: any) {
-      alert('Upload failed: ' + error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        alert('Upload failed: ' + error.message);
+      } else {
+        alert('An unknown error occurred during upload.');
+      }
     } finally {
       setUploading(false);
     }
@@ -180,9 +185,11 @@ export default function AdminMenuPage() {
             <label className="block text-sm mb-1 font-medium">Image</label>
             
             {formData.image_url && (
-              <img 
+              <Image 
                 src={formData.image_url} 
                 alt="Preview" 
+                width={500}
+                height={500}
                 className="w-full h-32 object-cover rounded mb-2"
               />
             )}
@@ -260,7 +267,7 @@ export default function AdminMenuPage() {
           <div key={item.id} className="bg-card text-card-foreground rounded-lg border shadow-sm p-4">
             <div className="flex gap-3">
               {item.image_url && (
-                <img src={item.image_url} alt={item.title} className="w-20 h-20 object-cover rounded" />
+                <Image src={item.image_url} alt={item.title} width={100} height={100} className="w-20 h-20 object-cover rounded" />
               )}
               <div className="flex-1">
                 <div className="flex items-start justify-between">

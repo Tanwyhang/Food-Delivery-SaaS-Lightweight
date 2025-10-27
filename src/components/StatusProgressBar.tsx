@@ -3,10 +3,11 @@
 import { CreditCard, ChefHat, Truck, CheckCircle, LucideIcon } from 'lucide-react';
 
 interface StatusProgressBarProps {
-  currentStatus: 'paid' | 'preparing' | 'delivering' | 'delivered';
+  currentStatus: 'pending' | 'paid' | 'preparing' | 'delivering' | 'delivered';
 }
 
 const statuses: { key: string; label: string; icon: LucideIcon }[] = [
+  { key: 'pending', label: 'Pending', icon: CreditCard },
   { key: 'paid', label: 'Paid', icon: CreditCard },
   { key: 'preparing', label: 'Preparing', icon: ChefHat },
   { key: 'delivering', label: 'Delivering', icon: Truck },

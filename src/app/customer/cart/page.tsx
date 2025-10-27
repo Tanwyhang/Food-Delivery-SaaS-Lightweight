@@ -2,18 +2,32 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import CartItemCard from '@/components/CartItemCard';
 import { CartItem } from '@/lib/types';
-import { Package } from 'lucide-react';
+import { Package, Clipboard } from 'lucide-react';
+
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+type Block = 'Amarin' | 'Azelia' | 'Eugenia' | 'Sierra' | 'Amaryn' | 'Azelia' | 'Eugenia' | 'Emilia' | 'Sierra' | 'Sierra Elite' | 'Sierra Prime' | 'Sierra 3A Elegant' | 'Salvia' | 'Citra' | 'Citra Elite 3' | 'Senni 3A';
 
 export default function CartPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const [block, setBlock] = useState<'Amarin' | 'Azelia' | 'Eugenia' | 'Sierra'>('Amarin');
+  const [block, setBlock] = useState<Block>('Amarin');
   const [lorong, setLorong] = useState('');
   const [unit, setUnit] = useState('');
   const [hasOrder, setHasOrder] = useState(false);
+  const [copied, setCopied] = useState(false);
   const router = useRouter();
+
+  const handleCopy = () => {
+    const phoneNumber = process.env.NEXT_PUBLIC_PHONE_NUMBER?.substring(1) || '123456789';
+    navigator.clipboard.writeText(phoneNumber);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     const saved = localStorage.getItem('cart');
@@ -34,7 +48,7 @@ export default function CartPage() {
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  const handlePayNow = async () => {
+  const handlePlaceOrder = async () => {
     const phone = localStorage.getItem('customerPhone');
     if (!phone) {
       router.push('/customer/phone');
@@ -54,7 +68,7 @@ export default function CartPage() {
 
     setLoading(true);
     try {
-      const res = await fetch('/api/createBill', {
+      const res = await fetch('/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, items: cart, total, address }),
@@ -62,23 +76,18 @@ export default function CartPage() {
 
       const data = await res.json();
       if (data.success) {
-        // PROTOTYPE: Show success message
-        console.log('✅ Payment Success:', data.message);
-        
         const existingOrders = localStorage.getItem(`orders_${phone}`);
         const orders = existingOrders ? JSON.parse(existingOrders) : [];
         orders.push(data.orderId);
         localStorage.setItem(`orders_${phone}`, JSON.stringify(orders));
         localStorage.removeItem('cart');
-        
-        // Redirect to order status page (no external payment gateway)
         router.push('/customer/orderStatus');
       } else {
         alert('Order failed. Please try again.');
-        setLoading(false);
       }
-    } catch (error) {
+    } catch {
       alert('Order failed. Please try again.');
+    } finally {
       setLoading(false);
     }
   };
@@ -115,16 +124,27 @@ export default function CartPage() {
             <h2 className="font-semibold mb-3">Delivery Address</h2>
             
             <label className="block text-sm mb-1">Block *</label>
-            <select
-              value={block}
-              onChange={(e) => setBlock(e.target.value as any)}
-              className="w-full border border-input bg-background rounded px-3 py-2 mb-3"
-            >
-              <option value="Amarin">Amarin</option>
-              <option value="Azelia">Azelia</option>
-              <option value="Eugenia">Eugenia</option>
-              <option value="Sierra">Sierra</option>
-            </select>
+            <Select onValueChange={(value) => setBlock(value as Block)} defaultValue={block}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a block" />
+              </SelectTrigger>
+              <SelectContent className="bg-white">
+                <SelectGroup>
+                  <SelectItem value="Amarin">Amarin</SelectItem>
+                  <SelectItem value="Azelia">Azelia</SelectItem>
+                  <SelectItem value="Eugenia">Eugenia</SelectItem>
+                  <SelectItem value="Emilia">Emilia</SelectItem>
+                  <SelectItem value="Sierra">Sierra</SelectItem>
+                  <SelectItem value="Sierra Elite">Sierra Elite</SelectItem>
+                  <SelectItem value="Sierra Prime">Sierra Prime</SelectItem>
+                  <SelectItem value="Sierra 3A Elegant">Sierra 3A Elegant</SelectItem>
+                  <SelectItem value="Salvia">Salvia</SelectItem>
+                  <SelectItem value="Citra">Citra</SelectItem>
+                  <SelectItem value="Citra Elite 3">Citra Elite 3</SelectItem>
+                  <SelectItem value="Senni 3A">Senni 3A</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
 
             <label className="block text-sm mb-1">Lorong *</label>
             <input
@@ -147,14 +167,44 @@ export default function CartPage() {
             />
           </div>
 
+          <div className="bg-card text-card-foreground rounded-lg border shadow-sm p-4 mb-4 text-center">
+            <h2 className="font-semibold mb-3">Payment</h2>
+            <p className="text-sm text-muted-foreground mb-2">Please scan the QR code to pay.</p>
+            <Image src={process.env.NEXT_PUBLIC_QR_CODE_URL || '/placeholder-qr.png'} alt="QR Code" width={200} height={200} className="mx-auto my-4" />
+            <p className="text-sm text-muted-foreground">Or transfer to the number below:</p>
+            <div className="flex justify-center items-center gap-2">
+              <input type="text" value="+60" disabled className="w-16 text-center bg-muted text-muted-foreground rounded-md" />
+              <input type="text" value={process.env.NEXT_PUBLIC_PHONE_NUMBER?.substring(1) || '123456789'} disabled className="flex-grow text-center bg-muted text-muted-foreground rounded-md" />
+              <button onClick={handleCopy} className="p-2 bg-secondary text-secondary-foreground rounded-md">
+                <Clipboard className="w-4 h-4" />
+              </button>
+              {copied && <span className="text-xs text-green-500">Copied!</span>}
+            </div>
+          </div>
+
           <div className="space-y-3">
-            <button
-              onClick={handlePayNow}
-              disabled={loading}
-              className="w-full bg-primary text-primary-foreground py-4 rounded-lg font-semibold text-lg hover:opacity-90 transition disabled:opacity-50"
-            >
-              {loading ? 'Processing...' : 'Pay Now'}
-            </button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button
+                  disabled={loading}
+                  className="w-full bg-primary text-primary-foreground py-4 rounded-lg font-semibold text-lg hover:opacity-90 transition disabled:opacity-50"
+                >
+                  {loading ? 'Processing...' : 'I have completed the payment'}
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Have you completed the payment?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Your order will be placed upon confirmation.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handlePlaceOrder}>Continue</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </>
       )}

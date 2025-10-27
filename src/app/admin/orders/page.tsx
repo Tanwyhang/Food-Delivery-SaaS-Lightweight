@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabaseClient';
 import OrderCard from '@/components/OrderCard';
 import { Order } from '@/lib/types';
 
-const statusOrder = ['paid', 'preparing', 'delivering', 'delivered'];
+const statusOrder = ['pending', 'paid', 'preparing', 'delivering', 'delivered'];
 const nextStatus: Record<string, string> = {
   paid: 'preparing',
   preparing: 'delivering',
@@ -47,6 +47,24 @@ export default function AdminOrdersPage() {
       .update({ status: nextStatus[order.status] })
       .eq('id', orderId);
     
+    fetchOrders();
+  };
+
+  const confirmPayment = async (orderId: string) => {
+    await supabase
+      .from('orders')
+      .update({ status: 'paid' })
+      .eq('id', orderId);
+
+    fetchOrders();
+  };
+
+  const discardOrder = async (orderId: string) => {
+    await supabase
+      .from('orders')
+      .delete()
+      .eq('id', orderId);
+
     fetchOrders();
   };
 
@@ -106,6 +124,8 @@ export default function AdminOrdersPage() {
               key={order.id}
               order={order}
               onUpdateStatus={updateStatus}
+              onConfirmPayment={confirmPayment}
+              onDiscard={discardOrder}
               isSelected={selected.has(order.id)}
               onSelect={toggleSelect}
             />
