@@ -10,12 +10,12 @@ import { Package, Clipboard } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-type Block = 'Amarin' | 'Azelia' | 'Eugenia' | 'Sierra' | 'Amaryn' | 'Azelia' | 'Eugenia' | 'Emilia' | 'Sierra' | 'Sierra Elite' | 'Sierra Prime' | 'Sierra 3A Elegant' | 'Salvia' | 'Citra' | 'Citra Elite 3' | 'Senni 3A';
+type Block = 'Amaryn' | 'Azelia' | 'Eugenia' | 'Sierra' | 'Amaryn' | 'Azelia' | 'Eugenia' | 'Emilia' | 'Sierra' | 'Sierra Elite' | 'Sierra Prime' | 'Sierra 3A Elegant' | 'Salvia' | 'Citra' | 'Citra Elite 3' | 'Senni 3A';
 
 export default function CartPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const [block, setBlock] = useState<Block>('Amarin');
+  const [block, setBlock] = useState<Block>('Amaryn');
   const [lorong, setLorong] = useState('');
   const [unit, setUnit] = useState('');
   const [hasOrder, setHasOrder] = useState(false);
@@ -130,7 +130,7 @@ export default function CartPage() {
               </SelectTrigger>
               <SelectContent className="bg-white">
                 <SelectGroup>
-                  <SelectItem value="Amarin">Amarin</SelectItem>
+                  <SelectItem value="Amaryn">Amaryn</SelectItem>
                   <SelectItem value="Azelia">Azelia</SelectItem>
                   <SelectItem value="Eugenia">Eugenia</SelectItem>
                   <SelectItem value="Emilia">Emilia</SelectItem>

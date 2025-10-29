@@ -6,7 +6,7 @@ export interface CartItem {
 }
 
 export interface Address {
-  block: 'Amarin' | 'Azelia' | 'Eugenia' | 'Sierra';
+  block: 'Amaryn' | 'Azelia' | 'Eugenia' | 'Sierra';
   lorong: number;
   unit: string;
 }
