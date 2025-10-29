@@ -2,6 +2,12 @@ import { CartItem } from '@/lib/types';
 import { supabase } from '@/lib/supabaseClient';
 import { NextRequest, NextResponse } from 'next/server';
 
+type Address = {
+  block?: string;
+  lorong?: number;
+  unit?: string;
+};
+
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
@@ -12,7 +18,7 @@ export async function POST(req: NextRequest) {
     return text.replace(/([_*[\]()~`>#+\-=|{}.!\\])/g, '\\$1');
   };
 
-  const formatAddress = (address: any) => {
+  const formatAddress = (address: Address) => {
     if (!address) return 'N/A';
     const parts = [];
     if (address.block) parts.push(address.block);
