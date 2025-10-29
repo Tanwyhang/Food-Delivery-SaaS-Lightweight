@@ -11,6 +11,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/storage/v1/object/public/menu%20images/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'mosaskywvcvhnlqgydnj.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/public/TNG-QR/**',
+      },
     ],
   },
 };

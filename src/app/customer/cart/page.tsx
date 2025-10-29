@@ -170,7 +170,7 @@ export default function CartPage() {
           <div className="bg-card text-card-foreground rounded-lg border shadow-sm p-4 mb-4 text-center">
             <h2 className="font-semibold mb-3">Payment</h2>
             <p className="text-sm text-muted-foreground mb-2">Please scan the QR code to pay.</p>
-            <Image src={process.env.NEXT_PUBLIC_QR_CODE_URL || '/placeholder-qr.png'} alt="QR Code" width={200} height={200} className="mx-auto my-4" />
+            <Image src={process.env.NEXT_PUBLIC_QR_CODE_URL || "placeholder"} width={250} height={250} alt="QR Code" className="mx-auto my-4" />
             <p className="text-sm text-muted-foreground">Or transfer to the number below:</p>
             <div className="flex justify-center items-center gap-2">
               <input type="text" value="+60" disabled className="w-16 text-center bg-muted text-muted-foreground rounded-md" />
